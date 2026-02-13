@@ -4,6 +4,7 @@ const cors = require('cors')
 const connectDB = require('./config/db')
 const authRouter = require('./routes/authRoutes')
 const testRouter = require('./routes/testRoute')
+const Maprouter = require('./routes/MapRoutes')
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRouter)
 app.use('/api/test', testRouter);
+app.use('/api/maps',Maprouter);
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).json({
