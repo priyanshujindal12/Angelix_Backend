@@ -52,7 +52,7 @@ const addEmergencyContact = async (req, res) => {
 const getEmergencyContacts = async (req, res) => {
   try {
     const { clerkId } = req.auth
-    const user = await User.findOne({ clerkId })
+    const user = await userModel.findOne({ clerkId })
       .populate('emergencyContacts.user', 'name email avatar phoneNumber')
     res.json({
       success: true,

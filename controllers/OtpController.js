@@ -1,75 +1,61 @@
-const nodemailer = require('nodemailer')
+const { Resend } = require('resend')
 const User = require('../models/userModel')
 const OtpModel = require('../models/OtpModel')
-
-/* ------------------------------------------------ */
-/* CREATE MAIL TRANSPORTER (ONLY ONCE) */
-/* ------------------------------------------------ */
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, 
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 20000,
-  greetingTimeout: 20000,
-})
+const resend = new Resend(process.env.RESEND_API_KEY)
 const sendOtp = async (req, res) => {
   try {
     const { clerkId } = req.auth
-
-    console.log('✅ Request came')
-
+    console.log('📩 OTP request received')
     const user = await User.findOne({ clerkId })
-
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
-
-    console.log('User:', user.email)
+    console.log('User email:', user.email)
 
     /* ---------- GENERATE OTP ---------- */
-
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
-
     await OtpModel.deleteMany({ clerkId })
-
     await OtpModel.create({
       clerkId,
-      phone: user.email, // using email for verification
+      phone: user.email, // using email verification
       otp,
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     })
-
     console.log('✅ OTP created:', otp)
 
-    const mailOptions = {
-      from: `"Angelix Safety" <${process.env.EMAIL_USER}>`,
+    /* ---------- SEND EMAIL VIA RESEND ---------- */
+    const response = await resend.emails.send({
+      from: 'Angelix Safety <onboarding@resend.dev>', // default resend sender
       to: user.email,
       subject: 'Angelix Phone Verification OTP',
-      text: `Your OTP is ${otp}. It expires in 5 minutes.`,
-    }
-
-    const info = await transporter.sendMail(mailOptions)
-
-    console.log('✅ Email sent:', info.response)
-
+      html: `
+        <div style="font-family: Arial; padding:20px">
+          <h2>Angelix Safety Verification</h2>
+          <p>Your OTP is:</p>
+          <h1 style="color:#9333EA">${otp}</h1>
+          <p>This OTP expires in <b>5 minutes</b>.</p>
+        </div>
+      `,
+    })
+    console.log('✅ Email sent:', response)
     return res.status(200).json({
       success: true,
       message: 'OTP sent to your email',
     })
   } catch (error) {
     console.error('❌ Send OTP error:', error)
+
     return res.status(500).json({
+      success: false,
       message: 'Failed to send OTP',
       error: error.message,
     })
   }
 }
 
+/* ------------------------------------------------ */
+/* VERIFY OTP */
+/* ------------------------------------------------ */
 
 const verifyOtp = async (req, res) => {
   try {
@@ -100,12 +86,15 @@ const verifyOtp = async (req, res) => {
 
     await OtpModel.deleteMany({ clerkId })
 
+    console.log('✅ Phone verified successfully')
+
     return res.status(200).json({
       success: true,
       message: 'Phone verified successfully',
     })
   } catch (error) {
     console.error('❌ Verify OTP error:', error)
+
     return res.status(500).json({
       message: 'Verification failed',
     })
