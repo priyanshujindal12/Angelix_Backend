@@ -35,14 +35,23 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    emergencyContacts: [
-      {
-        name: String,
-        phone: String,
-        relation: String,
-      },
-    ],
-
+  emergencyContacts: [
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    nickname: {
+      type: String,
+      default: 'bunny',
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+],
     safetyCircle: [
       {
         type: mongoose.Schema.Types.ObjectId,
