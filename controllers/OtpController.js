@@ -17,12 +17,6 @@ const transporter = nodemailer.createTransport({
   connectionTimeout: 20000,
   greetingTimeout: 20000,
 })
-
-
-/* ------------------------------------------------ */
-/* SEND OTP */
-/* ------------------------------------------------ */
-
 const sendOtp = async (req, res) => {
   try {
     const { clerkId } = req.auth
