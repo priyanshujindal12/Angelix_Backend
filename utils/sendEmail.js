@@ -1,3 +1,4 @@
+require('dotenv').config();
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -6,7 +7,8 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 })
-
+console.log(process.env.EMAIL_PASS);
+console.log(process.env.EMAIL_USER);
 const sendEmail = async (to, subject, text) => {
   try {
     const info = await transporter.sendMail({

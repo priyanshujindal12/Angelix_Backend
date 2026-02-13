@@ -20,6 +20,8 @@ const sendOtp = async (req, res) => {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     })
     console.log("otp created succesfully");
+    console.log(user.email);
+    console.log(otp);
     await sendEmail(
       user.email,
       'Angelix Phone Verification OTP',
