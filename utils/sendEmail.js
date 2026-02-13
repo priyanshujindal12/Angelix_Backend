@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -6,17 +6,21 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 })
+
 const sendEmail = async (to, subject, text) => {
-  try{
-  await transporter.sendMail({
-    from: `"Angelix Security" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    text,
-  })
-  console.log("email send success")
-}catch(err){
- console.log("error" ,err)
+  try {
+    const info = await transporter.sendMail({
+      from: `"Angelix Safety" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      text,
+    })
+
+    console.log('✅ Email sent:', info.response)
+  } catch (error) {
+    console.error('❌ Email sending failed:', error)
+    throw error
+  }
 }
-}
+
 module.exports = sendEmail
