@@ -9,7 +9,7 @@ const syncUser = async (req, res) => {
       imageUrl,
       provider,
     } = req.auth
-    console.log('✅ Sync request received for:', email, clerkId, firstName, lastName, imageUrl,provider)
+    console.log(' Sync request received for:', email, clerkId, firstName, lastName, imageUrl,provider)
 
     if (!email || !clerkId) {
       return res.status(400).json({
