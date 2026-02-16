@@ -7,7 +7,8 @@ const authRouter = require('./routes/authRoutes')
 const testRouter = require('./routes/testRoute')
 const Maprouter = require('./routes/MapRoutes')
 const emergencyContactrouter = require('./routes/emergencyRoutes')
-const otpRouter = require('./routes/OtpRoute')
+const otpRouter = require('./routes/OtpRoute');
+const recordingRouter = require('./routes/recordingRoutes');
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -23,6 +24,7 @@ app.use('/api/test', testRouter);
 app.use('/api/maps',Maprouter);
 app.use('/api/addnumber',otpRouter);
 app.use('/api/emergency',emergencyContactrouter)
+app.use('/api/recordings', recordingRouter)
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).json({
