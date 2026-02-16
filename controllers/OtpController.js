@@ -69,7 +69,7 @@ const sendOtp = async (req, res) => {
         </div>
       `,
     })
-
+    console.log("email sent succesfully");
     return res.status(200).json({
       success: true,
       message: 'OTP sent to your email',
