@@ -1,5 +1,5 @@
 const brevo = require('@getbrevo/brevo')
-const User = require('../models/userModel')
+const userModel = require('../models/userModel')
 const OtpModel = require('../models/OtpModel')
 const { parsePhoneNumberFromString } = require('libphonenumber-js')
 const brevoClient = new brevo.TransactionalEmailsApi()
@@ -7,42 +7,34 @@ brevoClient.setApiKey(
   brevo.TransactionalEmailsApiApiKeys.apiKey,
   process.env.BREVO_API_KEY
 )
-
 const validatePhone = (phone) => {
   try {
     const phoneNumber = parsePhoneNumberFromString(phone)
-
     if (!phoneNumber || !phoneNumber.isValid()) {
       return null
     }
-
-    // returns normalized format (+91XXXXXXXXXX)
     return phoneNumber.number
   } catch {
     return null
   }
 }
-
 const sendOtp = async (req, res) => {
   try {
     const { clerkId } = req.auth
     const { phone } = req.body
-
     if (!phone) {
       return res.status(400).json({
         message: 'Phone number required',
       })
     }
-
     const validPhone = validatePhone(phone)
-
     if (!validPhone) {
       return res.status(400).json({
         message: 'Invalid phone number format',
       })
     }
 
-    const user = await User.findOne({ clerkId })
+    const user = await userModel.findOne({ clerkId })
 
     if (!user) {
       return res.status(404).json({
@@ -67,7 +59,7 @@ const sendOtp = async (req, res) => {
     const emailData = {
       sender: {
         name: 'Angelix Safety',
-        email: 'priyanshujindal009@gmail.com', // must be verified in Brevo
+        email: 'priyanshujindal009@gmail.com',
       },
       to: [
         {
@@ -89,11 +81,8 @@ const sendOtp = async (req, res) => {
         </div>
       `,
     }
-
     await brevoClient.sendTransacEmail(emailData)
-
     console.log('✅ Email sent successfully to:', user.email)
-
     return res.status(200).json({
       success: true,
       message: 'OTP sent to your email',
@@ -106,8 +95,6 @@ const sendOtp = async (req, res) => {
     })
   }
 }
-
-
 const verifyOtp = async (req, res) => {
   try {
     const { phone, otp } = req.body
@@ -124,14 +111,10 @@ const verifyOtp = async (req, res) => {
         message: 'Invalid phone number',
       })
     }
-
-    /* ---------- FIND OTP ---------- */
-
     const existingOtp = await OtpModel.findOne({
       clerkId,
       phone: validPhone,
     })
-
     if (!existingOtp) {
       return res.status(400).json({
         message: 'OTP not found',
@@ -150,35 +133,26 @@ const verifyOtp = async (req, res) => {
       })
     }
 
-    /* ---------- UPDATE USER ---------- */
-
-    await User.findOneAndUpdate(
+    await userModel.findOneAndUpdate(
       { clerkId },
       {
         phone: validPhone,
         phoneVerified: true,
       }
     )
-
     await OtpModel.deleteMany({ clerkId })
-
-    console.log('✅ Phone verified successfully')
-
+    console.log(' Phone verified successfully')
     return res.status(200).json({
       success: true,
       message: 'Phone verified successfully',
     })
   } catch (error) {
-    console.error('❌ Verify OTP error:', error)
-
+    console.error(' Verify OTP error:', error)
     return res.status(500).json({
       message: 'Verification failed',
     })
   }
 }
-
-
-
 module.exports = {
   sendOtp,
   verifyOtp,

@@ -1,5 +1,4 @@
 const { verifyToken, createClerkClient } = require('@clerk/backend')
-const { email } = require('zod')
 const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
 })

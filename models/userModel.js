@@ -19,11 +19,11 @@ const UserSchema = new mongoose.Schema(
       trim: true,
     },
     avatar: {
-      type: String, 
+      type: String,
     },
     provider: {
       type: String,
-      enum: ['oauth_google', 'google', 'apple'],
+      enum: ['email', 'oauth_google', 'google', 'apple'],
       default: 'email',
     },
     phone: {
@@ -31,27 +31,27 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       default: null,
     },
-      phoneVerified: {
+    phoneVerified: {
       type: Boolean,
       default: false,
     },
-  emergencyContacts: [
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    nickname: {
-      type: String,
-      default: 'bunny',
-    },
-    addedAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-],
+    emergencyContacts: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        nickname: {
+          type: String,
+          default: 'bunny',
+        },
+        addedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     safetyCircle: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -60,10 +60,10 @@ const UserSchema = new mongoose.Schema(
     ],
 
     lastKnownLocation: {
-      latitude: Number ,
+      latitude: Number,
       longitude: Number,
       updatedAt: Date,
-      
+
     },
 
     isSOSActive: {
@@ -76,8 +76,8 @@ const UserSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 )
-const userModel=mongoose.model('User', UserSchema)
+const userModel = mongoose.model('User', UserSchema)
 module.exports = userModel;

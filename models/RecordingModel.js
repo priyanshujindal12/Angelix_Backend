@@ -1,26 +1,26 @@
-const mongoose=require('mongoose');
-const recordingModelSchema=new  mongoose.Schema({
-    user:{
+const mongoose = require('mongoose');
+const recordingModelSchema = new mongoose.Schema({
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"user",
+        ref: "User",
         required: true
     },
-    videoUrl:{
+    videoUrl: {
         type: String,
         required: true
     },
-    audioUrl:{
+    audioUrl: {
         type: String,
         required: true
     },
-    location:{
+    location: {
         latitude: Number,
         longitude: Number,
     },
-    startedAt:  Date,
+    startedAt: Date,
     endedAt: Date
 },
-   {timestamps: true},
+    { timestamps: true },
 )
-const recordingModel=mongoose.model("Recording", recordingModelSchema);
-module.exports=recordingModel;
+const recordingModel = mongoose.model("Recording", recordingModelSchema);
+module.exports = recordingModel;

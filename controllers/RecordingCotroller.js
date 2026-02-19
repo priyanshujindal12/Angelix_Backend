@@ -11,7 +11,6 @@ const uploadToCloudinary = (file, options) => {
         resolve(result)
       }
     )
-
     streamifier.createReadStream(file.buffer).pipe(stream)
   })
 }
@@ -36,11 +35,9 @@ const createRecording = async (req, res) => {
     })
 
     const audioResult = await uploadToCloudinary(audio[0], {
-      resource_type: 'video', // audio treated as video in cloudinary
+      resource_type: 'video', 
       folder: 'angelix/recordings/audio',
     })
-
-    /* ---------- SAVE RECORD ---------- */
     const recording = await recordingModel.create({
       user: user._id,
       videoUrl: videoResult.secure_url,
@@ -58,16 +55,12 @@ const createRecording = async (req, res) => {
       recording,
     })
   } catch (err) {
-    console.error('❌ Create recording error:', err)
+    console.error(' Create recording error:', err)
     return res.status(500).json({
       message: 'Recording upload failed',
     })
   }
 }
-
-/* ===================================================== */
-/* GET USER RECORDINGS */
-/* ===================================================== */
 
 const getUserRecordings = async (req, res) => {
   try {
@@ -80,7 +73,6 @@ const getUserRecordings = async (req, res) => {
         message: 'User not found',
       })
     }
-
     const recordings = await recordingModel
       .find({ user: user._id })
       .sort({ createdAt: -1 })
@@ -90,13 +82,12 @@ const getUserRecordings = async (req, res) => {
       recordings,
     })
   } catch (err) {
-    console.error('❌ Fetch recordings error:', err)
+    console.error(' Fetch recordings error:', err)
     return res.status(500).json({
       message: 'Failed to fetch recordings',
     })
   }
 }
-
 module.exports = {
   createRecording,
   getUserRecordings,

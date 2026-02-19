@@ -9,10 +9,12 @@ const Maprouter = require('./routes/MapRoutes')
 const emergencyContactrouter = require('./routes/emergencyRoutes')
 const otpRouter = require('./routes/OtpRoute');
 const recordingRouter = require('./routes/recordingRoutes');
+const sosRouter = require('./routes/sosRoutes');
 const app = express()
 app.use(cors())
 app.use(express.json())
 connectDB()
+require('./utils/sosRemainderService')
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -21,10 +23,11 @@ app.get('/', (req, res) => {
 })
 app.use('/api/auth', authRouter)
 app.use('/api/test', testRouter);
-app.use('/api/maps',Maprouter);
-app.use('/api/addnumber',otpRouter);
-app.use('/api/emergency',emergencyContactrouter)
+app.use('/api/maps', Maprouter);
+app.use('/api/addnumber', otpRouter);
+app.use('/api/emergency', emergencyContactrouter)
 app.use('/api/recordings', recordingRouter)
+app.use('/api/sos', sosRouter)
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).json({
@@ -32,9 +35,7 @@ app.use((err, req, res, next) => {
     message: 'Something went wrong',
   })
 })
-
 const PORT = process.env.PORT || 5000
-
 app.listen(PORT, () => {
   console.log(` Server running on port ${PORT}`)
 })
